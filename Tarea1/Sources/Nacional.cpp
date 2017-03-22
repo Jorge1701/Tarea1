@@ -8,7 +8,7 @@ Nacional::Nacional(string id, Direccion* direccion, string rut) :
 	this->rut = rut;
 }
 
-int Nacional::getRut() {
+string Nacional::getRut() {
 	return rut;
 }
 
