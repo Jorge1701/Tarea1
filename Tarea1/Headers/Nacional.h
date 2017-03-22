@@ -11,7 +11,7 @@ private:
 public:
 	Nacional(string, Direccion*, string);
 
-	int getRut();
+	string getRut();
 
 	void setRut(string);
 
