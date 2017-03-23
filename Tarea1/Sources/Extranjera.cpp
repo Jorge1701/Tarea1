@@ -1,6 +1,6 @@
 #include "Extranjera.h"
 
-Extranjera::Extranjera(string id,Direccion *direccion,string nombreFantasia) :
+Extranjera::Extranjera(string id,Direccion* direccion, string nombreFantasia) :
 Empresa(id, direccion) {
 	this->nombreFantasia = nombreFantasia;
 }
@@ -13,11 +13,12 @@ float Extranjera::getDescuento(){
 	return 0.8;
 }
 
-void Extranjera::setNombreFantasia(string nombre){
-	this->nombreFantasia=nombre;
+string Extranjera::getNombreFantasia(){
+    return nombreFantasia;
 }
 
-Extranjera::~Extranjera() {
 
+Extranjera::~Extranjera(){
+    
 }
-
+ 
