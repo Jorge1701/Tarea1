@@ -1,5 +1,5 @@
-#ifndef EXTRANJERA_H_
-#define EXTRANJERA_H_
+#ifndef EXTRANJERA_H
+#define EXTRANJERA_H
 
 #include "Empresa.h"
 #include <string>
@@ -7,19 +7,20 @@ using namespace std;
 
 class Extranjera: public Empresa {
 private:
-	string nombreFantasia;
+    string nombreFantasia;
+
 public:
-
-	Extranjera(string, Direccion*, string);
-
-	string getNombreFantasia();
+    Extranjera(string,Direccion*,string);
+    string getNombreFantasia();
 
 	float getDescuento();
 
 	void setNombreFantasia(string);
+        
+        string getNombreFantasia();
 
-	~Extranjera();
+        ~Extranjera();
 };
 
+#endif 
 
-#endif
