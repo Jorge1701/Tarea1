@@ -1,5 +1,3 @@
-#ifndef DATATYPES_EXTRANJERA_CPP_
-#define DATATYPES_EXTRANJERA_CPP_
 #include "Extranjera.h"
 
 Extranjera::Extranjera(string id,Direccion *direccion,string nombreFantasia) :
@@ -22,4 +20,4 @@ void Extranjera::setNombreFantasia(string nombre){
 Extranjera::~Extranjera() {
 
 }
-#endif 
+
