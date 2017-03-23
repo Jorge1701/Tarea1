@@ -10,14 +10,13 @@ private:
     string nombreFantasia;
 
 public:
-    Extranjera(string,Direccion*,string);
-    string getNombreFantasia();
+    	Extranjera(string,Direccion*,string);
+    	
+	string getNombreFantasia();
 
 	float getDescuento();
 
 	void setNombreFantasia(string);
-        
-        string getNombreFantasia();
 
         ~Extranjera();
 };
