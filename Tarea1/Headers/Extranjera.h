@@ -1,5 +1,5 @@
-#ifndef DATATYPES_EXTRANJERA_H_
-#define DATATYPES_EXTRANJERA_H_
+#ifndef EXTRANJERA_H_
+#define EXTRANJERA_H_
 
 #include "Empresa.h"
 #include <string>
