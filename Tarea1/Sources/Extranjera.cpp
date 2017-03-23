@@ -9,7 +9,7 @@ string Extranjera::getNombreFantasia() {
 	return nombreFantasia;
 }
 
-float getDescuento(){
+float Extranjera::getDescuento(){
 	return 0.8;
 }
 
