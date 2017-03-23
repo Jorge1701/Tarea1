@@ -13,11 +13,6 @@ float Extranjera::getDescuento(){
 	return 0.8;
 }
 
-string Extranjera::getNombreFantasia(){
-    return nombreFantasia;
-}
-
-
 Extranjera::~Extranjera(){
     
 }
