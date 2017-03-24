@@ -12,17 +12,22 @@ private:
 
 public:
 	RelacionLaboral(float,Fecha*,Empresa*);
+        RelacionLaboral();
 
-	float getSueldoLiquido(); //TODO implementar correctamente
+	
+        float getSueldo();  
 	Fecha* getFechaDesvinculacion();
 	Empresa* getEm();
+        float getSueldoLiquido();
 
 	void setEm(Empresa*);
 	void setSueldo(float);
 	void setFecha(Fecha*);
-	~RelacionLaboral();
+	
+        ~RelacionLaboral();
 };
 
 
 
 #endif
+
