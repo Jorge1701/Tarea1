@@ -10,6 +10,7 @@
 #include "Nacional.h"
 #include "RelacionLaboral.h"
 
+#include <string>
 #include <iostream>
 #include <stdexcept>
 using namespace std;
@@ -40,6 +41,68 @@ int main() {
 
     for (int i = 0; i < MAX_EMPRESAS; i++)
         empresas[i] = NULL;
+
+    try {
+        agregarEmpleado("123", "Nombre1", "Apellidp1", Direccion("Pais1", "Ciudad1", "Numero1", "Calle1"));
+    } catch (invalid_argument e) {
+        cout << "Existe-A\n";
+    }
+    try {
+        agregarEmpleado("234", "Nombre2", "Apellidp2", Direccion("Pais2", "Ciudad2", "Numero2", "Calle2"));
+    } catch (invalid_argument e) {
+        cout << "Exi-B\n";
+    }
+
+    for (int i = 0; i < MAX_EMPLEADOS; i++) {
+        if (empleados[i] != NULL) {
+            cout << i << " existe" << endl;
+        }
+    }
+
+    agregarEmpresa(*(new DtNacional("987", new Direccion("Pais3", "Ciudad3", "Numero3", "Calle3"), "Rut1")));
+    agregarEmpresa(*(new DtExtranjera("876", new Direccion("Pais4", "Ciudad4", "Numero4", "Calle4"), "NombreFantasia1")));
+    agregarEmpresa(*(new DtNacional("765", new Direccion("Pais5", "Ciudad5", "Numero5", "Calle5"), "Rut2")));
+
+    try {
+        agregarRelacionLaboral("234", "987", 1000);
+    } catch (invalid_argument e) {
+        cout << "A\n";
+    }
+    try {
+        agregarRelacionLaboral("234", "876", 1000);
+    } catch (invalid_argument e) {
+        cout << "B\n";
+    }
+    try {
+        agregarRelacionLaboral("123", "876", 1000);
+    } catch (invalid_argument e) {
+        cout << "C\n";
+    }
+    try {
+        agregarRelacionLaboral("123", "765", 1000);
+    } catch (invalid_argument e) {
+        cout << "D\n";
+    }
+
+    RelacionLaboral** r1 = empleados[0]->getRelaciones();
+    cout << "Empleado: " << empleados[0]->getCi() << endl;
+    for (int i = 0; i < 10; i++) {
+        if (r1[i] != NULL) {
+            cout << "Id: " << r1[i]->getEmpresa()->getId() << endl;
+            cout << "Sueldo: " << r1[i]->getSueldoLiquido() << endl;
+        }
+    }
+
+    RelacionLaboral** r2 = empleados[1]->getRelaciones();
+    cout << "Empleado: " << empleados[1]->getCi() << endl;
+    for (int i = 0; i < 10; i++) {
+        if (r2[i] != NULL) {
+            cout << "Id: " << r2[i]->getEmpresa()->getId() << endl;
+            cout << "Sueldo: " << r2[i]->getSueldoLiquido() << endl;
+        }
+    }
+    cout << "\nFin\n";
+
     return 0;
 }
 
@@ -53,7 +116,7 @@ void agregarEmpleado(string ci, string nombre, string apellido, Direccion dir) {
         if (empleados[i] != NULL && empleados[i]->getCi() == ci) {
             // Si el empleado no es NULL, me fijo si tiene la misma ci que el nuevo, en cuyo caso tiro excepcion
             throw invalid_argument("Empleado ya existe");
-        } else {
+        } else if (empleados[i] == NULL) {
             // Si el empleado es NULL, aumento las posiciones libres y coloco la posicion actual como posicion para el nuevo empleado
             posiciones_libres++;
             posicion = i;
@@ -127,8 +190,6 @@ void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
         throw invalid_argument("Empresa no existe");
     }
 
-    RelacionLaboral* rl = new RelacionLaboral(sueldo, NULL, empresa);
-
     for (int i = 0; i < MAX_EMPLEADOS; i++) {
         if (empleados[i] != NULL && empleados[i]->getCi() == ciEmpleado) {
             empleado = empleados[i];
@@ -142,8 +203,11 @@ void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
 
     RelacionLaboral** relaciones = empleado->getRelaciones();
 
-    /* Recorrer las relaciones para saber si
-     *  la relacion ya existe, si no existe, 
-     * agregar la relacion rl a la lista de relaciones del empleado
-     */
+    for (int i = 0; i < 50; i++) {
+        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == empresa->getId()) {
+            throw invalid_argument("Relacion ya existe");
+        }
+    }
+
+    empleado->addRelacion(new RelacionLaboral(sueldo, NULL, empresa));
 }
