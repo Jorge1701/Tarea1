@@ -31,6 +31,40 @@ void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinc
 
 // Main
 
+void a() {
+    RelacionLaboral** r1 = empleados[0]->getRelaciones();
+    cout << "\nEmpleado: " << empleados[0]->getCi() << endl;
+    for (int i = 0; i < 10; i++) {
+        if (r1[i] != NULL) {
+            cout << "Id: " << r1[i]->getEmpresa()->getId() << endl;
+            cout << "Sueldo: " << r1[i]->getSueldoLiquido() << endl;
+            cout << "Fecha: ";
+            Fecha* f = r1[i]->getFechaDesvinculacion();
+            if (f == NULL)
+                cout << "NULL";
+            else
+                cout << *f;
+            cout << endl;
+        }
+    }
+
+    RelacionLaboral** r2 = empleados[1]->getRelaciones();
+    cout << "\nEmpleado: " << empleados[1]->getCi() << endl;
+    for (int i = 0; i < 10; i++) {
+        if (r2[i] != NULL) {
+            cout << "Id: " << r2[i]->getEmpresa()->getId() << endl;
+            cout << "Sueldo: " << r2[i]->getSueldoLiquido() << endl;
+            cout << "Fecha: ";
+            Fecha* f = r2[i]->getFechaDesvinculacion();
+            if (f == NULL)
+                cout << "NULL";
+            else
+                cout << *f;
+            cout << endl;
+        }
+    }
+}
+
 int main() {
     // Inicializar arreglos globales
     empleados = (Empleado**) malloc(sizeof (Empleado) * MAX_EMPLEADOS);
@@ -85,23 +119,14 @@ int main() {
         cout << "D\n";
     }
 
-    RelacionLaboral** r1 = empleados[0]->getRelaciones();
-    cout << "Empleado: " << empleados[0]->getCi() << endl;
-    for (int i = 0; i < 10; i++) {
-        if (r1[i] != NULL) {
-            cout << "Id: " << r1[i]->getEmpresa()->getId() << endl;
-            cout << "Sueldo: " << r1[i]->getSueldoLiquido() << endl;
-        }
-    }
+    a();
 
-    RelacionLaboral** r2 = empleados[1]->getRelaciones();
-    cout << "Empleado: " << empleados[1]->getCi() << endl;
-    for (int i = 0; i < 10; i++) {
-        if (r2[i] != NULL) {
-            cout << "Id: " << r2[i]->getEmpresa()->getId() << endl;
-            cout << "Sueldo: " << r2[i]->getSueldoLiquido() << endl;
-        }
-    }
+    finalizarRelacionLaboral("234", "987", Fecha(28, 3, 2017));
+
+    cout << "\n\nDespues de finalizar relaciones:\n\n";
+
+    a();
+
     cout << "\nFin\n";
 
     return 0;
@@ -121,11 +146,6 @@ void agregarEmpleado(string ci, string nombre, string apellido, Direccion dir) {
             // Si el empleado es NULL, aumento las posiciones libres y coloco la posicion actual como posicion para el nuevo empleado
             posiciones_libres++;
             posicion = i;
-
-            /*
-             * El colocar la posicion = i cada vez que hay algun empleado NULL, genera que cada nuevo empleado
-             * se agregue en la posicion mas cerca del final del arreglo
-             */
         }
     }
 
@@ -222,8 +242,10 @@ void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
 }
 
 void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinculacion) {
+    // El empleado con el que la empresa va a estar relacionado
     Empleado* empleado = NULL;
 
+    // Se busca al empleado igual que en agregarEmpleado
     for (int i = 0; i < MAX_EMPLEADOS; i++) {
         if (empleados[i] != NULL && empleados[i]->getCi() == ciEmpleado) {
             empleado = empleados[i];
@@ -235,14 +257,18 @@ void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinc
         throw invalid_argument("Empleado no existe");
     }
 
+    // Obtengo las relaciones de ese empleado
     RelacionLaboral** relaciones = empleado->getRelaciones();
 
+    // Recorro las relaciones del empleado y me fijo si una de ellas es con la idEmpresa
     for (int i = 0; i < 50; i++) {
         if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == idEmpresa) {
-            relaciones[i]->setFecha(desvinculacion);
+            // Si encuentro la relacion, le seteo la fecha de desvinculacion
+            relaciones[i]->setFecha(&desvinculacion);
             return;
         }
     }
 
+    // Si la relacion no existe...
     throw invalid_argument("Relacion no existe");
 }
