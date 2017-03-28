@@ -22,48 +22,21 @@ using namespace std;
 // Definir arreglos globales
 Empleado** empleados;
 Empresa** empresas;
+int cantEmpleados;
 
-// Definir prototipos
+// Definir prototipos obligatorios
 void agregarEmpleado(string ci, string nombre, string apellido, Direccion dir);
 void agregarEmpresa(DtEmpresa& empresa);
+DtEmpleado** listarEmpleados(int& cantEmpleados);
 void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo);
 void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinculacion);
+DtEmpresa** obtenerInfoEmpresaPorEmpleado(string ciEmpleado, int& cantEmpresas);
+
+// Otros prototipos
+Direccion* generarDireccion();
+Fecha* generarFecha();
 
 // Main
-
-void a() {
-    RelacionLaboral** r1 = empleados[0]->getRelaciones();
-    cout << "\nEmpleado: " << empleados[0]->getCi() << endl;
-    for (int i = 0; i < 10; i++) {
-        if (r1[i] != NULL) {
-            cout << "Id: " << r1[i]->getEmpresa()->getId() << endl;
-            cout << "Sueldo: " << r1[i]->getSueldoLiquido() << endl;
-            cout << "Fecha: ";
-            Fecha* f = r1[i]->getFechaDesvinculacion();
-            if (f == NULL)
-                cout << "NULL";
-            else
-                cout << *f;
-            cout << endl;
-        }
-    }
-
-    RelacionLaboral** r2 = empleados[1]->getRelaciones();
-    cout << "\nEmpleado: " << empleados[1]->getCi() << endl;
-    for (int i = 0; i < 10; i++) {
-        if (r2[i] != NULL) {
-            cout << "Id: " << r2[i]->getEmpresa()->getId() << endl;
-            cout << "Sueldo: " << r2[i]->getSueldoLiquido() << endl;
-            cout << "Fecha: ";
-            Fecha* f = r2[i]->getFechaDesvinculacion();
-            if (f == NULL)
-                cout << "NULL";
-            else
-                cout << *f;
-            cout << endl;
-        }
-    }
-}
 
 int main() {
     // Inicializar arreglos globales
@@ -77,58 +50,184 @@ int main() {
     for (int i = 0; i < MAX_EMPRESAS; i++)
         empresas[i] = NULL;
 
-    try {
-        agregarEmpleado("123", "Nombre1", "Apellidp1", Direccion("Pais1", "Ciudad1", "Numero1", "Calle1"));
-    } catch (invalid_argument e) {
-        cout << "Existe-A\n";
-    }
-    try {
-        agregarEmpleado("234", "Nombre2", "Apellidp2", Direccion("Pais2", "Ciudad2", "Numero2", "Calle2"));
-    } catch (invalid_argument e) {
-        cout << "Exi-B\n";
-    }
+    // Fin inicializacion
 
-    for (int i = 0; i < MAX_EMPLEADOS; i++) {
-        if (empleados[i] != NULL) {
-            cout << i << " existe" << endl;
+    int opcion = 0;
+
+    do {
+        // Imprimir menu
+        cout << "===== Menu ===========================" << endl;
+        cout << "   1) Agregar Empleado" << endl;
+        cout << "   2) Agregar Empresa" << endl;
+        cout << "   3) Listar Empleados" << endl;
+        cout << "   4) Agregar Relacion Laboral" << endl;
+        cout << "   5) Finalizar Relacion Laboral" << endl;
+        cout << "   6) Obtener Informacion Empresa" << endl;
+        cout << "   -----------------------------------" << endl;
+        cout << "   7) Mostrar Empleados" << endl;
+        cout << "   8) Mostrar Empresas" << endl;
+        cout << "   9) Mostrar Relaciones Laborales" << endl;
+
+        cout << "   0) Salir" << endl;
+
+        // Obtener opcion
+        cout << endl << "opcion: ";
+        cin >> opcion;
+
+        // Variables a usar
+        // Empleado
+        string ci, nombre, apellido;
+        // Empresa
+        string id, rut, nombreFantasia;
+        // Relacion Laboral
+        string ciEmpleado, idEmpresa;
+        int sueldo;
+
+        // Otros
+        int tipoEmpresa = 0;
+
+        // Limpiar buffer
+        cin.clear();
+        fflush(stdin);
+
+        // Hacer lo correspondiente
+        switch (opcion) {
+            case 1:
+                cout << "===== Agregar Empleado ===============" << endl;
+                cout << "CI: ";
+                getline(cin, ci);
+                cout << "Nombre: ";
+                getline(cin, nombre);
+                cout << "Apeliido: ";
+                getline(cin, apellido);
+
+                agregarEmpleado(ci, nombre, apellido, *generarDireccion());
+                break;
+            case 2:
+                cout << "===== Agregar Empresa ================" << endl;
+                cout << "   1) Nacional" << endl;
+                cout << "   2) Extranjera" << endl;
+                cout << "   0) Cancelar" << endl;
+
+                cout << endl << "opcion: ";
+                cin >> tipoEmpresa;
+
+                if (tipoEmpresa == 0) {
+                    break;
+                }
+
+                // Limpiar buffer
+                cin.clear();
+                fflush(stdin);
+
+                cout << "ID: ";
+                getline(cin, id);
+
+                if (tipoEmpresa == 1) {
+                    cout << "RUT: ";
+                    getline(cin, rut);
+
+                    agregarEmpresa(*(new DtNacional(id, generarDireccion(), rut)));
+                } else {
+                    cout << "Nombre Fantasia: ";
+                    getline(cin, nombreFantasia);
+                    agregarEmpresa(*(new DtExtranjera(id, generarDireccion(), nombreFantasia)));
+                }
+                break;
+            case 3:
+                cout << "===== Listar Empleados ===============" << endl;
+
+                cout << "Coming soon..." << endl;
+                break;
+            case 4:
+                cout << "===== Agregar Relacion Laboral =======" << endl;
+
+                cout << "CI Empleado: ";
+                getline(cin, ciEmpleado);
+                cout << "ID Empresa: ";
+                getline(cin, idEmpresa);
+                cout << "Sueldo: ";
+                cin >> sueldo;
+
+                agregarRelacionLaboral(ciEmpleado, idEmpresa, sueldo);
+                break;
+            case 5:
+                cout << "===== Finalizar Relacion Laboral =====" << endl;
+
+                cout << "CI Empleado: ";
+                getline(cin, ciEmpleado);
+                cout << "ID Empresa: ";
+                getline(cin, idEmpresa);
+
+                finalizarRelacionLaboral(ciEmpleado, idEmpresa, *generarFecha());
+                break;
+            case 6:
+                cout << "===== Obtener Informacion Empresa ====" << endl;
+
+                cout << "Coming soon..." << endl;
+                break;
+            case 7:
+                for (int i = 0; i < MAX_EMPLEADOS; i++) {
+                    if (empleados[i] != NULL) {
+                        cout << "----------" << endl;
+                        cout << "CI: " << empleados[i]->getCi() << endl;
+                        cout << "Nombre: " << empleados[i]->getNombre() << endl;
+                        cout << "Apellido: " << empleados[i]->getApellido() << endl;
+                        cout << "Direccion: " << *empleados[i]->getDireccion() << endl;
+                    }
+                }
+                break;
+            case 8:
+                for (int i = 0; i < MAX_EMPRESAS; i++) {
+                    if (empresas[i] != NULL) {
+                        Empresa* e = empresas[i];
+
+                        cout << "----------" << endl;
+                        cout << "ID: " << e->getId() << endl;
+                        cout << "Direccion: " << *e->getDireccion() << endl;
+
+                        Nacional* nac = dynamic_cast<Nacional*> (e);
+                        if (nac) {
+                            cout << "RUT: " << nac->getRut() << endl;
+                        } else {
+                            Extranjera* ext = dynamic_cast<Extranjera*> (e);
+                            cout << "Nombre Fantasia: " << ext->getNombreFantasia() << endl;
+                        }
+                    }
+                }
+                break;
+            case 9:
+                for (int i = 0; i < MAX_EMPLEADOS; i++) {
+                    if (empleados[i] != NULL) {
+                        cout << "----------" << endl;
+                        cout << "Empleado: " << empleados[i]->getCi() << ", " << empleados[i]->getNombre() << ", " << empleados[i]->getApellido() << endl;
+
+                        RelacionLaboral** r = empleados[i]->getRelaciones();
+
+                        int cant = 0;
+
+                        for (int j = 0; j < 50; j++) {
+                            if (r[j] != NULL) {
+                                cout << "Relacion 1:" << endl;
+                                cout << "Empresa: " << r[j]->getEmpresa()->getId() << endl;
+                                cout << "Sueldo Liquido: " << r[j]->getSueldoLiquido() << endl;
+                                cout << "Fecha: " << *r[j]->getFechaDesvinculacion();
+                                if (r[j]->getFechaDesvinculacion() != NULL) {
+                                    cout << " (Relacion Finalizada)" << endl;
+                                }
+
+                                cant++;
+                            }
+                        }
+
+                        if (cant == 0) {
+                            cout << "No hay relaciones laborales" << endl;
+                        }
+                    }
+                }
+                break;
         }
-    }
-
-    agregarEmpresa(*(new DtNacional("987", new Direccion("Pais3", "Ciudad3", "Numero3", "Calle3"), "Rut1")));
-    agregarEmpresa(*(new DtExtranjera("876", new Direccion("Pais4", "Ciudad4", "Numero4", "Calle4"), "NombreFantasia1")));
-    agregarEmpresa(*(new DtNacional("765", new Direccion("Pais5", "Ciudad5", "Numero5", "Calle5"), "Rut2")));
-
-    try {
-        agregarRelacionLaboral("234", "987", 1000);
-    } catch (invalid_argument e) {
-        cout << "A\n";
-    }
-    try {
-        agregarRelacionLaboral("234", "876", 1000);
-    } catch (invalid_argument e) {
-        cout << "B\n";
-    }
-    try {
-        agregarRelacionLaboral("123", "876", 1000);
-    } catch (invalid_argument e) {
-        cout << "C\n";
-    }
-    try {
-        agregarRelacionLaboral("123", "765", 1000);
-    } catch (invalid_argument e) {
-        cout << "D\n";
-    }
-
-    a();
-
-    finalizarRelacionLaboral("234", "987", Fecha(28, 3, 2017));
-
-    cout << "\n\nDespues de finalizar relaciones:\n\n";
-
-    a();
-
-    cout << "\nFin\n";
-
+    } while (opcion != 0);
     return 0;
 }
 
@@ -271,4 +370,36 @@ void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinc
 
     // Si la relacion no existe...
     throw invalid_argument("Relacion no existe");
+}
+
+// Implementaciones extras
+
+Direccion* generarDireccion() {
+    string pais, ciudad, numero, calle;
+
+    cout << "   Direccion" << endl;
+    cout << "Pais: ";
+    getline(cin, pais);
+    cout << "Ciudad: ";
+    getline(cin, ciudad);
+    cout << "Calle: ";
+    getline(cin, calle);
+    cout << "Numero: ";
+    getline(cin, numero);
+
+    return new Direccion(pais, ciudad, calle, numero);
+}
+
+Fecha* generarFecha() {
+    int dia, mes, anio;
+
+    cout << "   Fecha" << endl;
+    cout << "Dia: ";
+    cin >> dia;
+    cout << "Mes: ";
+    cin >> mes;
+    cout << "Año: ";
+    cin >> anio;
+
+    return new Fecha(dia, mes, anio);
 }
