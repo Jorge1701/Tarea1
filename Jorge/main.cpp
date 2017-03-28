@@ -27,6 +27,7 @@ Empresa** empresas;
 void agregarEmpleado(string ci, string nombre, string apellido, Direccion dir);
 void agregarEmpresa(DtEmpresa& empresa);
 void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo);
+void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinculacion);
 
 // Main
 
@@ -176,19 +177,52 @@ void agregarEmpresa(DtEmpresa& empresa) {
 }
 
 void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
+    // Empresa y empleado entre los que se va a agregar la relacion
     Empresa* empresa = NULL;
     Empleado* empleado = NULL;
 
+    // Recorro las empresas para ver si encuentro una con el idEmpresa
     for (int i = 0; i < MAX_EMPRESAS; i++) {
         if (empresas[i] != NULL && empresas[i]->getId() == idEmpresa) {
+            // Si encuentro una, la coloco en empresa
             empresa = empresas[i];
             break;
         }
     }
 
+    // Si empresa es NULL, significa que no existia esa empresa
     if (empresa == NULL) {
         throw invalid_argument("Empresa no existe");
     }
+
+    // Mismo procedimiento para encontrar el empleado
+    for (int i = 0; i < MAX_EMPLEADOS; i++) {
+        if (empleados[i] != NULL && empleados[i]->getCi() == ciEmpleado) {
+            empleado = empleados[i];
+            break;
+        }
+    }
+
+    if (empleado == NULL) {
+        throw invalid_argument("Empleado no existe");
+    }
+
+    // Obtengo las relaciones laborales del empleado con ciEmpleado
+    RelacionLaboral** relaciones = empleado->getRelaciones();
+
+    // Recorro las relaciones, y si entre esas ya hay una que apunte a la empresa idEmpresa, la relacion ya existia
+    for (int i = 0; i < 50; i++) {
+        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == idEmpresa) {
+            throw invalid_argument("Relacion ya existe");
+        }
+    }
+
+    // Si no existia esa relacion, la agrego utilizando addRelacion
+    empleado->addRelacion(new RelacionLaboral(sueldo, NULL, empresa));
+}
+
+void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinculacion) {
+    Empleado* empleado = NULL;
 
     for (int i = 0; i < MAX_EMPLEADOS; i++) {
         if (empleados[i] != NULL && empleados[i]->getCi() == ciEmpleado) {
@@ -204,10 +238,11 @@ void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
     RelacionLaboral** relaciones = empleado->getRelaciones();
 
     for (int i = 0; i < 50; i++) {
-        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == empresa->getId()) {
-            throw invalid_argument("Relacion ya existe");
+        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == idEmpresa) {
+            relaciones[i]->setFecha(desvinculacion);
+            return;
         }
     }
 
-    empleado->addRelacion(new RelacionLaboral(sueldo, NULL, empresa));
+    throw invalid_argument("Relacion no existe");
 }
