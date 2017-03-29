@@ -1,4 +1,10 @@
 // Como obtener el sueldo de listarEmpleados
+// Diferentes casos en los que no funcionen las funciones
+// Tienen que tener todos los constructores
+// Strings delete en constructores?
+// Como borrar los arreglos?
+// Como manejar las variables static en las clases
+// Errores en los what()
 
 #include "Direccion.h"
 #include "DtEmpleado.h"
@@ -15,6 +21,7 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+
 using namespace std;
 
 // Definir variables globales
@@ -57,6 +64,7 @@ int main() {
 
     // Agregaciones de prueba
 
+    /*
     agregarEmpleado("4.742.523-5", "Jorge", "Rosas", Direccion("Uruguay", "Fray Bentos", "3541", "Mendoza"));
     agregarEmpleado("1.234.567-8", "Emple", "Ado", Direccion("Pais1", "Ciudad1", "Numero1", "Calle1"));
     agregarEmpleado("9.876.543-2", "Emple2", "Ado2", Direccion("Pais2", "Ciudad2", "Numero2", "Calle2"));
@@ -76,6 +84,7 @@ int main() {
     agregarRelacionLaboral("9.876.543-2", "1", 10000);
     finalizarRelacionLaboral("9.876.543-2", "1", Fecha(1, 1, 2017));
     agregarRelacionLaboral("9.876.543-2", "3", 10000);
+     */
 
     // Fin pruebas
 
@@ -130,7 +139,12 @@ int main() {
                 cout << "Apeliido: ";
                 getline(cin, apellido);
 
-                agregarEmpleado(ci, nombre, apellido, *generarDireccion());
+                try {
+                    agregarEmpleado(ci, nombre, apellido, *generarDireccion());
+                } catch (const invalid_argument& e) {
+                    cout << "Error: " << e.what() << endl;
+                }
+
                 break;
             case 2:
                 cout << "===== Agregar Empresa ================" << endl;
@@ -151,15 +165,19 @@ int main() {
                 cout << "ID: ";
                 getline(cin, id);
 
-                if (tipoEmpresa == 1) {
-                    cout << "RUT: ";
-                    getline(cin, rut);
+                try {
+                    if (tipoEmpresa == 1) {
+                        cout << "RUT: ";
+                        getline(cin, rut);
 
-                    agregarEmpresa(*(new DtNacional(id, generarDireccion(), rut)));
-                } else {
-                    cout << "Nombre Fantasia: ";
-                    getline(cin, nombreFantasia);
-                    agregarEmpresa(*(new DtExtranjera(id, generarDireccion(), nombreFantasia)));
+                        agregarEmpresa(*(new DtNacional(id, generarDireccion(), rut)));
+                    } else {
+                        cout << "Nombre Fantasia: ";
+                        getline(cin, nombreFantasia);
+                        agregarEmpresa(*(new DtExtranjera(id, generarDireccion(), nombreFantasia)));
+                    }
+                } catch (const invalid_argument& e) {
+                    cout << "Error: " << e.what() << endl;
                 }
                 break;
             case 3:
@@ -186,7 +204,11 @@ int main() {
                 cout << "Sueldo: ";
                 cin >> sueldo;
 
-                agregarRelacionLaboral(ciEmpleado, idEmpresa, sueldo);
+                try {
+                    agregarRelacionLaboral(ciEmpleado, idEmpresa, sueldo);
+                } catch (const invalid_argument& e) {
+                    cout << "Error: " << e.what() << endl;
+                }
                 break;
             case 5:
                 cout << "===== Finalizar Relacion Laboral =====" << endl;
@@ -207,6 +229,10 @@ int main() {
 
                 for (int i = 0; i < cantEmpresas; i++) {
                     cout << "----------" << endl;
+                    cout << *dtEmpresas[i] << endl;
+
+                    /* Gracias a la sobrecarga, todo esto no se usa.
+
                     cout << "ID: " << dtEmpresas[i]->getId() << endl;
                     cout << "Direccion: " << *dtEmpresas[i]->getDireccion() << endl;
 
@@ -217,7 +243,7 @@ int main() {
                     } else {
                         DtExtranjera* ext = dynamic_cast<DtExtranjera*> (dtEmpresas[i]);
                         cout << "Nombre Fantasia: " << ext->getNombreFantasia() << endl;
-                    }
+                    }*/
                 }
                 break;
             case 7:
@@ -386,25 +412,34 @@ void agregarRelacionLaboral(string ciEmpleado, string idEmpresa, float sueldo) {
 DtEmpleado** listarEmpleados(int& cantEmpleados) {
     cantEmpleados = 0;
 
+    // Recorre la lista de empleados y por cada uno que no sea NULL aumenta el contador
     for (int i = 0; i < MAX_EMPLEADOS; i++)
         if (empleados[i] != NULL)
             cantEmpleados++;
 
+    // Crea un arreglo de punteros de DtEmpleado de largo cantEmpleados
     DtEmpleado** resultado = (DtEmpleado**) malloc(sizeof (DtEmpleado) * cantEmpleados);
 
+    // Recorre los empleados de nuevo
     for (int i = 0; i < MAX_EMPLEADOS; i++)
         if (empleados[i] != NULL) {
+            // Si uno no es NULL, lo guardo en 'e' (para que quede mas corto de escribir que empleado[i])
             Empleado* e = empleados[i];
 
-            int sueldoLiquido = 0;
+            // Inicializo el sueldo a 0
+            int sueldoLiquidoTotal = 0;
 
+            // Obtengo las relaciones del empleado 'e'
             RelacionLaboral** r = e->getRelaciones();
 
+            // Recorro todas sus relaciones
             for (int j = 0; j < 50; j++)
                 if (r[j] != NULL && r[j]->getFechaDesvinculacion() == NULL)
-                    sueldoLiquido += r[j]->getSueldoLiquido();
+                    // Por cada una de sus relaciones que no sea NULL, le sumo el sueldoLiquido de esa relacion al sueldoLiquidoTotal
+                    sueldoLiquidoTotal += r[j]->getSueldoLiquido();
 
-            resultado[i] = new DtEmpleado(e->getCi(), e->getNombre(), e->getApellido(), e->getDireccion(), sueldoLiquido);
+            // Seteo la posicion i de resultado a un nuevo DtEmpleado, y le paso al constructor los parametros del empleado 'e' y su sueldoLiquidoTotal
+            resultado[i] = new DtEmpleado(e->getCi(), e->getNombre(), e->getApellido(), e->getDireccion(), sueldoLiquidoTotal);
         }
 
     return resultado;
@@ -442,6 +477,7 @@ void finalizarRelacionLaboral(string ciEmpleado, string idEmpresa, Fecha desvinc
 DtEmpresa** obtenerInfoEmpresaPorEmpleado(string ciEmpleado, int& cantEmpresas) {
     cantEmpresas = 0;
 
+    // El empleado 
     Empleado* e = NULL;
 
     for (int i = 0; i < MAX_EMPLEADOS; i++)
@@ -452,7 +488,6 @@ DtEmpresa** obtenerInfoEmpresaPorEmpleado(string ciEmpleado, int& cantEmpresas) 
         throw invalid_argument("Empleado no existe");
 
     RelacionLaboral** relaciones = e->getRelaciones();
-
 
     for (int i = 0; i < 50; i++)
         if (relaciones[i] != NULL && relaciones[i]->getFechaDesvinculacion() == NULL)
@@ -496,15 +531,28 @@ Direccion * generarDireccion() {
 }
 
 Fecha * generarFecha() {
+    Fecha* f;
+    bool fechaInvalida = false;
     int dia, mes, anio;
 
-    cout << "   Fecha" << endl;
-    cout << "Dia: ";
-    cin >> dia;
-    cout << "Mes: ";
-    cin >> mes;
-    cout << "Año: ";
-    cin >> anio;
+    do {
+        fechaInvalida = false;
 
-    return new Fecha(dia, mes, anio);
+        cout << "   Fecha" << endl;
+        cout << "Dia: ";
+        cin >> dia;
+        cout << "Mes: ";
+        cin >> mes;
+        cout << "Año: ";
+        cin >> anio;
+
+        try {
+            f = new Fecha(dia, mes, anio);
+        } catch (const invalid_argument& e) {
+            cout << "Error: " << e.what() << endl;
+            fechaInvalida = true;
+        }
+    } while (fechaInvalida);
+
+    return f;
 }
