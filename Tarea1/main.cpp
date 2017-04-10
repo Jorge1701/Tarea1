@@ -184,16 +184,6 @@ int main() {
                 cout << *dtEmpresas[i] << endl;
             }
             break;
-            case 7:
-            for (int i = 0; i < MAX_EMPLEADOS; i++)
-            if (empleados[i] != NULL) {
-                cout << "----------" << endl;
-                cout << "CI: " << empleados[i]->getCi() << endl;
-                cout << "Nombre: " << empleados[i]->getNombre() << endl;
-                cout << "Apellido: " << empleados[i]->getApellido() << endl;
-                cout << "Direccion: " << *empleados[i]->getDireccion() << endl;
-            }
-            break;
         }
     } while (opcion != 0);
     
