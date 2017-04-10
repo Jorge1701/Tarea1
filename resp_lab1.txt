@@ -1,0 +1,23 @@
+
+1. ¿Cuáles son las dependencias circulares que fueron necesarias
+solucionar para que el programa compile?
+
+Después de que se analizó el diagrama dado, se llegó a la conclusión de solucionar las dependencias circulares tomando como referencia a la clase A,para lograr esto se utilizó la técnica brindada en el material adicional llamada forward declaration(Declaración Avanzada),luego se implementaron dos forward declaration (una para la inclusión de B en A y otra para la inclusión de C en A), con esto se solucionan las dependencias circulares y se lleva a cabo la compilación con éxito.
+
+
+2. ¿Qué es forward declaration?
+
+
+En la programación de computadoras, una forward declaration (Declaracion Avanzada) es una declaración de un identificador (que denotará una entidad tal como un tipo, una variable, una constante o una función) para el cual el programador todavía no ha dado una definición completa.
+
+Es necesario que un compilador conozca ciertas propiedades de un identificador (tamaño para la asignación de memoria, tipo de datos para la comprobación de tipo, como tipo firma de funciones), pero no otros detalles, como el valor particular que tiene (en el caso de variables o Constantes) o definición (en el caso de funciones).
+
+La forward declaration se utiliza en los lenguajes de programación que requieren una declaración previa antes del uso.
+
+Es necesario para la recursión mutua en tales lenguajes, ya que es imposible definir tales funciones (o estructuras de datos) sin una referencia directa en una definición.
+
+Una de las funciones (respectivamente, estructuras de datos) debe ser definida en primer lugar. También es útil permitir la organización flexible del código, por ejemplo si se desea colocar el cuerpo principal en la parte superior, y se llama funciones debajo de él.
+
+En otros lenguajes de programación no son necesarias las forward declarations,porque en general utilizan un compilador de varias pasadas lo cual retrasa enormemente el tiempo de compilación.
+
+En estos casos se definen identificadores(variables inicializadas, funciones definidas) antes de que se utilicen en tiempo de ejecución, pero no es necesario definirlos antes de que se usen en el código fuente para la compilación o interpretación.
