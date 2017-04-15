@@ -19,8 +19,8 @@
 using namespace std;
 
 /*VARIABLES GLOBALES*/
-#define MAX_EMPLEADOS 10
-#define MAX_EMPRESAS 10
+#define MAX_EMPLEADOS 50
+#define MAX_EMPRESAS 50
 #define MAX_RELACIONES 50
 
 /*ARREGLOS GLOBALES*/
@@ -205,7 +205,7 @@ void agregarEmpleado(string ci, string nombre, string apellido, Direccion dir) {
     if (posiciones_libres == 0) {
         throw invalid_argument("No hay mas espacio para empleados");
         } else {
-        empleados[posicion] = new Empleado(ci, nombre, apellido, &dir);
+        empleados[posicion] = new Empleado(ci, nombre, apellido, new Direccion(dir.getPais(),dir.getCiudad(),dir.getNumero(),dir.getCalle()));
     }
 }
 
@@ -368,7 +368,7 @@ Direccion * generarDireccion() {
     cout << "Numero: ";
     getline(cin, numero);
     
-    return new Direccion(pais, ciudad, calle, numero);
+    return new Direccion(pais, ciudad, numero, calle);
 }
 
 Fecha * generarFecha() {
