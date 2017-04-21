@@ -31,18 +31,32 @@ RelacionLaboral** Empleado::getRelaciones() {
     return this->relaciones;
 }
 
-void Empleado::addRelacion(RelacionLaboral* rl) {
-    int i;
+void Empleado::addRelacion(Empresa* e, float sueldo) {
+    for (int i = 0; i < 50; i++)
+        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == e->getId())
+            throw invalid_argument("Relacion ya existe");
 
-    for (i = 0; i < 50; i++) {
-        if (this->relaciones[i] == NULL) {
-            relaciones[i] = rl;
-            break;
+    for (int i = 0; i < 50; i++)
+        if (relaciones[i] == NULL) {
+            relaciones[i] = new RelacionLaboral(sueldo, NULL, e);
+            return;
         }
-    }
 
-    if (i == 50)
-        cout << "Lista llena" << endl;
+    throw invalid_argument("Maximo de relaciones alcanzado");
+}
+
+void Empleado::finalizarRelacion(string idEmpresa, Fecha desvinculacion) {
+    for (int i = 0; i < 50; i++)
+        if (relaciones[i] != NULL && relaciones[i]->getEmpresa()->getId() == idEmpresa) {
+            if (relaciones[i]->getFechaDesvinculacion() != NULL)
+                throw invalid_argument("La Relacion Ya Esta Finalizada");
+            else
+                relaciones[i]->setFecha(new Fecha(desvinculacion.getDia(), desvinculacion.getMes(), desvinculacion.getAnio()));
+
+            return;
+        }
+
+    throw invalid_argument("Relacion no existe");
 }
 
 void Empleado::setCi(string ci) {
