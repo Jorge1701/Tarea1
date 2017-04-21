@@ -28,7 +28,8 @@ public:
     void setDireccion(Direccion*);
 
     RelacionLaboral** getRelaciones();
-    void addRelacion(RelacionLaboral*);
+    void addRelacion(Empresa*, float);
+    void finalizarRelacion(string, Fecha);
 
     ~Empleado();
 };
